@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # Dictionary of country/region codes and their corresponding country/region names
-country_codes = {
+phone_to_country = {
     '1': 'US, Canada, and US Territories',
     '2': 'Africa, Aruba, Greenland, Faroe Islands, and British Indian Ocean Territory',
     '3': 'Europe and Armenia',
@@ -220,6 +220,9 @@ country_codes = {
     '996': 'Kyrgyzstan',
     '997': 'Kazakhstan',
     '998': 'Uzbekistan',
+}
+
+country_to_phone = {
 
     'AF': '93',
     'AL': '355',
@@ -432,14 +435,28 @@ country_codes = {
     # ... Add more codes as necessary
 }
 
-def get_country_or_region(phone_code):
-    # Iterate through the country codes to find the matching prefix
-    for code, region in sorted(country_codes.items(), key=lambda x: -len(x[0])):  # Sort by length of the code
-        if phone_code.startswith(code):
-            return region
-    return "Unknown region"  # Default if no match is found
+def get_country_or_region(input_code):
+    # Check if the input is a number
+    if input_code.isdigit():
+        # Check the phone_to_country dictionary
+        for phone_code, country in sorted(phone_to_country.items(), key=lambda x: -len(x[0])):
+            if input_code.startswith(phone_code):
+                return country
+        return "Unknown region"
+    # Check if the input is alpha-2
+    elif len(input_code) == 2 and input_code.isalpha():
+        # Convert to uppercase
+        input_code = input_code.upper()
+        # Check the country_to_phone dictionary
+        phone_code = country_to_phone.get(input_code)
+        if phone_code:
+            return phone_code
+        else:
+            return "Unknown region"
+    else:
+        return "Invalid input"
 
 if __name__ == "__main__":
-    phone_code = input("Enter the phone number or code (e.g., +44 or 44): ").strip('+')  # Strip leading '+'
-    result = get_country_or_region(phone_code)
-    print(f"The region for {phone_code} is: {result}")
+    input_code = input("Enter the phone number (e.g., +44 or 44), or alpha-2 country code (e.g., GB): ").strip('+').strip()
+    result = get_country_or_region(input_code)
+    print(f"The region for {input_code} is: {result}")
